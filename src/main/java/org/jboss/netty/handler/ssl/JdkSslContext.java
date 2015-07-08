@@ -31,6 +31,8 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLSessionContext;
+import javax.net.ssl.TrustManagerFactory;
+import javax.security.auth.x500.X500Principal;
 import java.io.File;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -46,6 +48,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
@@ -288,5 +291,23 @@ public abstract class JdkSslContext extends SslContext {
         cipher.init(Cipher.DECRYPT_MODE, pbeKey, encryptedPrivateKeyInfo.getAlgParameters());
 
         return encryptedPrivateKeyInfo.getKeySpec(cipher);
+    }
+
+    protected static TrustManagerFactory buildTrustManager(File certChainFile)
+            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
+        KeyStore ks = KeyStore.getInstance("JKS");
+        ks.load(null, null);
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+
+        for (ChannelBuffer buf: PemReader.readCertificates(certChainFile)) {
+            X509Certificate cert = (X509Certificate) cf.generateCertificate(new ChannelBufferInputStream(buf));
+            X500Principal principal = cert.getSubjectX500Principal();
+            ks.setCertificateEntry(principal.getName("RFC2253"), cert);
+        }
+
+        // Set up trust manager factory to use our key store.
+        TrustManagerFactory tm = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        tm.init(ks);
+        return tm;
     }
 }

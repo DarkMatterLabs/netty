@@ -16,20 +16,14 @@
 
 package org.jboss.netty.handler.ssl;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBufferInputStream;
-
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSessionContext;
+import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import javax.security.auth.x500.X500Principal;
 import java.io.File;
-import java.security.KeyStore;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -171,35 +165,17 @@ public final class JdkSslClientContext extends JdkSslContext {
                 keyManagers = kmf.getKeyManagers();
             }
 
-            if (serverCertChainFile == null) {
-                ctx = SSLContext.getInstance(PROTOCOL);
-                if (trustManagerFactory == null) {
-                    ctx.init(null, null, null);
-                } else {
-                    trustManagerFactory.init((KeyStore) null);
-                    ctx.init(keyManagers, trustManagerFactory.getTrustManagers(), null);
-                }
-            } else {
-                KeyStore ks = KeyStore.getInstance("JKS");
-                ks.load(null, null);
-                CertificateFactory cf = CertificateFactory.getInstance("X.509");
-
-                for (ChannelBuffer buf: PemReader.readCertificates(serverCertChainFile)) {
-                    X509Certificate cert = (X509Certificate) cf.generateCertificate(new ChannelBufferInputStream(buf));
-                    X500Principal principal = cert.getSubjectX500Principal();
-                    ks.setCertificateEntry(principal.getName("RFC2253"), cert);
-                }
-
-                // Set up trust manager factory to use our key store.
-                if (trustManagerFactory == null) {
-                    trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-                }
-                trustManagerFactory.init(ks);
-
-                // Initialize the SSLContext to work with the trust managers.
-                ctx = SSLContext.getInstance(PROTOCOL);
-                ctx.init(keyManagers, trustManagerFactory.getTrustManagers(), null);
+            if (serverCertChainFile != null) {
+                trustManagerFactory = buildTrustManager(serverCertChainFile);
             }
+            TrustManager[] trustManagers = null;
+            if (trustManagerFactory != null) {
+                trustManagers = trustManagerFactory.getTrustManagers();
+            }
+
+            // Initialize the SSLContext to work with the trust managers.
+            ctx = SSLContext.getInstance(PROTOCOL);
+            ctx.init(keyManagers, trustManagers, null);
 
             SSLSessionContext sessCtx = ctx.getClientSessionContext();
             if (sessionCacheSize > 0) {
