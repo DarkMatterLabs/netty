@@ -23,6 +23,7 @@ import javax.net.ssl.SSLSessionContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +54,8 @@ public final class JdkSslServerContext extends JdkSslContext {
      * @param keyPassword the password of the {@code keyFile}.
      *                    {@code null} if it's not password-protected.
      */
-    public JdkSslServerContext(File certChainFile, File keyFile, String keyPassword) throws SSLException {
+    public JdkSslServerContext(File certChainFile, File keyFile, String keyPassword)
+            throws SSLException {
         this(null, certChainFile, keyFile, keyPassword, null, null, 0, 0);
     }
 
@@ -111,6 +113,21 @@ public final class JdkSslServerContext extends JdkSslContext {
             SslBufferPool bufPool,
             File certChainFile, File keyFile, String keyPassword,
             File clientCertChainFile, TrustManagerFactory trustManagerFactory,
+            Iterable<String> ciphers, Iterable<String> nextProtocols,
+            long sessionCacheSize, long sessionTimeout) throws SSLException {
+        this(bufPool,
+                getSslFile(certChainFile),
+                getSslFile(keyFile),
+                keyPassword,
+                getSslFile(clientCertChainFile),
+                trustManagerFactory, ciphers,
+                nextProtocols, sessionCacheSize, sessionTimeout);
+    }
+
+    public JdkSslServerContext(
+            SslBufferPool bufPool,
+            InputStream certChainFile, InputStream keyFile, String keyPassword,
+            InputStream clientCertChainFile, TrustManagerFactory trustManagerFactory,
             Iterable<String> ciphers, Iterable<String> nextProtocols,
             long sessionCacheSize, long sessionTimeout) throws SSLException {
 

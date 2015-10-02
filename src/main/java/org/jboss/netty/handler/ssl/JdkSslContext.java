@@ -30,11 +30,15 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSessionContext;
 import javax.net.ssl.TrustManagerFactory;
 import javax.security.auth.x500.X500Principal;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyException;
@@ -159,6 +163,14 @@ public abstract class JdkSslContext extends SslContext {
         }
     }
 
+    protected static InputStream getSslFile(File f) throws SSLException {
+        try {
+            return f != null ? new FileInputStream(f): null;
+        } catch (FileNotFoundException e) {
+            throw new SSLException("Failed to load ssl key file", e);
+        }
+    }
+
     @Override
     public final List<String> cipherSuites() {
         return unmodifiableCipherSuites;
@@ -216,6 +228,14 @@ public abstract class JdkSslContext extends SslContext {
     }
 
     protected static KeyManagerFactory buildKeyManager(File certChainFile, File keyFile, String keyPassword)
+            throws KeyStoreException, CertificateException, NoSuchAlgorithmException, KeyException,
+            IOException, NoSuchPaddingException, InvalidKeySpecException, InvalidAlgorithmParameterException,
+            UnrecoverableKeyException {
+        return buildKeyManager(new FileInputStream(certChainFile), new FileInputStream(keyFile), keyPassword);
+    }
+
+    protected static KeyManagerFactory buildKeyManager(InputStream certChainFile,
+            InputStream keyFile, String keyPassword)
             throws KeyStoreException, CertificateException, NoSuchAlgorithmException, KeyException,
             IOException, NoSuchPaddingException, InvalidKeySpecException, InvalidAlgorithmParameterException,
             UnrecoverableKeyException {
@@ -294,6 +314,11 @@ public abstract class JdkSslContext extends SslContext {
     }
 
     protected static TrustManagerFactory buildTrustManager(File certChainFile)
+            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
+        return buildTrustManager(new FileInputStream(certChainFile));
+    }
+
+    protected static TrustManagerFactory buildTrustManager(InputStream certChainFile)
             throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
         KeyStore ks = KeyStore.getInstance("JKS");
         ks.load(null, null);

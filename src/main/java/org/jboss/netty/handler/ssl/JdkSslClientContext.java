@@ -24,6 +24,8 @@ import javax.net.ssl.SSLSessionContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +41,7 @@ public final class JdkSslClientContext extends JdkSslContext {
     /**
      * Creates a new instance.
      */
-    public JdkSslClientContext() throws SSLException {
+    public JdkSslClientContext() throws SSLException, FileNotFoundException {
         this(null, null, null, null, null, 0, 0);
     }
 
@@ -73,7 +75,8 @@ public final class JdkSslClientContext extends JdkSslContext {
      *                            that verifies the certificates sent from servers.
      *                            {@code null} to use the default.
      */
-    public JdkSslClientContext(File certChainFile, TrustManagerFactory trustManagerFactory) throws SSLException {
+    public JdkSslClientContext(File certChainFile, TrustManagerFactory trustManagerFactory)
+            throws SSLException {
         this(null, certChainFile, trustManagerFactory, null, null, 0, 0);
     }
 
@@ -131,11 +134,27 @@ public final class JdkSslClientContext extends JdkSslContext {
      *                       {@code 0} to use the default value.
      */
     public JdkSslClientContext(
+        SslBufferPool bufPool,
+        // Client cert
+        File certChainFile, File keyFile, String keyPassword,
+        // Server cert trust
+        File serverCertChainFile, TrustManagerFactory trustManagerFactory,
+        Iterable<String> ciphers, Iterable<String> nextProtocols,
+        long sessionCacheSize, long sessionTimeout) throws SSLException {
+        this(bufPool,
+                getSslFile(certChainFile),
+                getSslFile(keyFile),
+                keyPassword,
+                getSslFile(serverCertChainFile),
+                trustManagerFactory, ciphers, nextProtocols, sessionCacheSize, sessionTimeout);
+    }
+
+    public JdkSslClientContext(
             SslBufferPool bufPool,
             // Client cert
-            File certChainFile, File keyFile, String keyPassword,
+            InputStream certChainFile, InputStream keyFile, String keyPassword,
             // Server cert trust
-            File serverCertChainFile, TrustManagerFactory trustManagerFactory,
+            InputStream serverCertChainFile, TrustManagerFactory trustManagerFactory,
             Iterable<String> ciphers, Iterable<String> nextProtocols,
             long sessionCacheSize, long sessionTimeout) throws SSLException {
 

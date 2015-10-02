@@ -26,6 +26,7 @@ import org.jboss.netty.util.CharsetUtil;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -56,6 +57,14 @@ final class PemReader {
             Pattern.CASE_INSENSITIVE);
 
     static ChannelBuffer[] readCertificates(File file) throws CertificateException {
+        try {
+            return readCertificates(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            throw new CertificateException("Unable to read certificate file " + file);
+        }
+    }
+
+    static ChannelBuffer[] readCertificates(InputStream file) throws CertificateException {
         String content;
         try {
             content = readContent(file);
@@ -83,6 +92,14 @@ final class PemReader {
     }
 
     static ChannelBuffer readPrivateKey(File file) throws KeyException {
+        try {
+            return readPrivateKey(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            throw new KeyException("Unable to read private key file " + file);
+        }
+    }
+
+    static ChannelBuffer readPrivateKey(InputStream file) throws KeyException {
         String content;
         try {
             content = readContent(file);
@@ -98,8 +115,7 @@ final class PemReader {
         return Base64.decode(ChannelBuffers.copiedBuffer(m.group(1), CharsetUtil.US_ASCII));
     }
 
-    private static String readContent(File file) throws IOException {
-        InputStream in = new FileInputStream(file);
+    private static String readContent(InputStream in) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             byte[] buf = new byte[8192];
