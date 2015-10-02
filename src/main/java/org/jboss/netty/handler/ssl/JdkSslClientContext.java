@@ -83,6 +83,23 @@ public final class JdkSslClientContext extends JdkSslContext {
     /**
      * Creates a new instance.
      *
+     * @param certChainFile an X.509 certificate chain file in PEM format.
+     *                      {@code null} to use the system default
+     * @param trustManagerFactory the {@link TrustManagerFactory} that provides the {@link javax.net.ssl.TrustManager}s
+     *                            that verifies the certificates sent from servers.
+     *                            {@code null} to use the default.
+     */
+    public JdkSslClientContext(InputStream certChainFile,
+                               InputStream keyFile, TrustManagerFactory trustManagerFactory) throws SSLException {
+            this(null, certChainFile, keyFile, null,
+                null, trustManagerFactory,
+                null, null,
+                0, 0);
+    }
+
+    /**
+     * Creates a new instance.
+     *
      * @param bufPool the buffer pool which will be used by this context.
      *                {@code null} to use the default buffer pool.
      * @param certChainFile an X.509 certificate chain file in PEM format.

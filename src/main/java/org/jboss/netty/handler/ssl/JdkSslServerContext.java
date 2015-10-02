@@ -125,6 +125,15 @@ public final class JdkSslServerContext extends JdkSslContext {
     }
 
     public JdkSslServerContext(
+            InputStream certChainFile, InputStream keyFile,
+            InputStream clientCertChainFile) throws SSLException {
+        this(null,
+                certChainFile, keyFile, null,
+                clientCertChainFile, null,
+                null, null, 0, 0);
+    }
+
+    public JdkSslServerContext(
             SslBufferPool bufPool,
             InputStream certChainFile, InputStream keyFile, String keyPassword,
             InputStream clientCertChainFile, TrustManagerFactory trustManagerFactory,
