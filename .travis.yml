@@ -1,13 +1,9 @@
 language: java
 sudo: false
-skip_cleanup: true
 
 script:
   - mvn test
   - mvn package -DskipTests=true
-
-after_script:
-  - ls -la
 
 deploy:
   provider: s3
@@ -18,6 +14,7 @@ deploy:
   local-dir: target
   upload-dir: java/netty
   acl: private
+  skip_cleanup: true
   on:
     repo: KeyNexus/netty
     branch: '3.10'
