@@ -1,0 +1,54 @@
+language: java
+sudo: false
+
+script:
+  - mvn test
+  - mvn package -DskipTests=true
+
+after_success:
+  - md5sum netty/core/target/kmip4j-core-1.0.jar >> ./kmip4j-core-1.0.md5
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "5tfSBDAyx3bO9zKW355XVyDA8Px1OIxib5uNmE12aMLDrCYCBkGYSkc1C8j5dfzAPFVB9zkVvvsYe6LKfbiHL7tCRRt/IpnAiHB86Sb5cpFqttLv/iriy9eXhdZVgsNmGKF64dVk8YYwLTqwxCwgbuOa5A/1ECfcpjWVNFE5o7cvJCw89KAIUcW/xenuuLO2W10lhlSgfsZyNLRwcK8ynjG0qIvqQESojh6rM2xCCEEYaLXZp3uu8xrpKN85V8YQZZ/A+i08H2z2h5WDoq+7fSXKcPBH2UWLDRDsNyY4X1KzzBfGAMvM+R8h8673VyypPWW0oHDSYAbieKcHCZuMnIMBnOUYO3QGzTheBh2q/E8MGQ7yVIcZREgNpt63Q8R8enGlDyMpErO0j8jTwLUD85TweHHqW7txEwIw0Jr4x1oWADgHVDLUd3aeFoOmLACk5QcGqqosGGXvn2u5fxW/q/YSj/PUdpRhFxsruly21x6xJJDrHEZyPjSRlntRew5MpQH3y4RASyaOvywlsXNaGEpJXD+WS+0AJDzEk2cWvtMtxNpNGfYNYgp3mMSKq19EpcthyXS5AWeFVlowFjledWzJVLlXNNn7hnq6oxOBOdXFnrHSwZ+5jjLWgWMEPtgwF3QIWpokZMdWcMeRGQGNakOD+w0DAUcCF7WU9kk7gc0="
+  file:
+    - kmip4j-internal/core/target/kmip4j-core-1.0.jar
+    - ./kmip4j-core-1.0.md5
+  skip_cleanup: true
+  overwrite: true # re-upload over previous version
+  on:
+    repo: KeyNexus/kmip4j-internal
+    tags: true
+
+# Set up notification options
+notifications: 
+  email:
+    recipients:
+      - devops@keynexus.net
+
+    # change is when the repo status goes from pass to fail or vice versa
+    on_success: change
+    on_failure: always
+
+# declare your environment variables
+env:
+  # global will stay the same across all matrix possibilities (will not create additional combinations to run)
+  global: 
+    - KN_THEME=default
+    - KN_ENVIRONMENT=test
+    - CC_TEST_REPORTER_ID=45c807ce000072ac08ab5da26a869f6d79f31f640d437ff7850707c76e29c771
+
+# configure which branches to run
+branches:
+  # whitelist
+  only:
+    - master
+    # regex ok!
+    # Build if the branch has a Jira issue.
+    - /^\[?devops-.*$/
+    - /^\[?kn-.*$/ 
+  # blacklist - don't run tests for these
+  except:
+    - /^wip.*$/
+    - /^test.*/
