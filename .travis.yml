@@ -16,7 +16,7 @@ deploy:
   local_dir: target
   upload-dir: java/netty
   on: 
-    branch: master
+    branch: 3.10
 
 
 # Set up notification options
