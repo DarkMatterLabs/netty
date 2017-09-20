@@ -39,14 +39,6 @@ env:
 
 # configure which branches to run
 branches:
-  # whitelist
-  only:
-    - master
-    # regex ok!
-    # Build if the branch has a Jira issue.
-    - /^\[?devops-.*$/
-    - /^\[?kn-.*$/ 
-  # blacklist - don't run tests for these
   except:
     - /^wip.*$/
     - /^test.*/
