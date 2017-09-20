@@ -15,8 +15,6 @@ deploy:
   region: us-west-1
   local_dir: target
   upload-dir: java/netty
-  on: 
-    branch: 3.10
 
 
 # Set up notification options
