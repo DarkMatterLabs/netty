@@ -6,6 +6,9 @@ script:
   - mvn test
   - mvn package -DskipTests=true
 
+after_script:
+  - ls -la
+
 deploy:
   provider: s3
   access_key_id: AKIAJS4BBE3UNZOUE5EQ
@@ -18,7 +21,6 @@ deploy:
   on:
     repo: KeyNexus/netty
     branch: '3.10'
-
 
 
 # Set up notification options
