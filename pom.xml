@@ -760,7 +760,7 @@
 
   <repositories>
     <repository>
-      <id>keynexus-build<</id>
+      <id>keynexus-build</id>
       <url>ss3://keynexus-builds/java/</url>
     </repository>
   </repositories>
