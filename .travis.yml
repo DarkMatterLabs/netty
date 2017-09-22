@@ -8,10 +8,6 @@ script:
   - mvn test
   - mvn package -DskipTests=true
 
-before_deploy:
-  - mkdir deploy
-  - cp target/*.jar* deploy/  
-
 deploy:
   provider: s3
   access_key_id: AKIAJS4BBE3UNZOUE5EQ
@@ -22,6 +18,7 @@ deploy:
   upload-dir: java/netty
   acl: private
   skip_cleanup: true
+  region: us-west-2
   on:
     repo: KeyNexus/netty
     all_branches: true
