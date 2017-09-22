@@ -750,5 +750,19 @@
       </plugin>
     </plugins>
   </build>
+
+  <distributionManagement>
+    <repository>
+      <id>keynexus-build</id>
+      <url>ss3://keynexus-builds/java/</url>
+    </repository>
+  </distributionManagement>
+
+  <repositories>
+    <repository>
+      <id>keynexus-build<</id>
+      <url>ss3://keynexus-builds/java/</url>
+    </repository>
+  </repositories>
 </project>
 
