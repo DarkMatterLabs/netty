@@ -24,7 +24,7 @@ deploy:
   skip_cleanup: true
   on:
     repo: KeyNexus/netty
-    branch: '3.10'
+    all_branches: true
 
 # Set up notification options
 notifications: 
