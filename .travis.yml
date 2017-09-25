@@ -3,6 +3,7 @@ sudo: false
 
 before_script:
   - cp $TRAVIS_BUILD_DIR/.travis.settings.xml ~/.m2/settings.xml 
+  - cp $TRAVIS_BUILD_DIR/.travis.extensions.xml ~/.m2/extensions.xml 
 
 script:
   - mvn test
