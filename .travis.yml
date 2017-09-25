@@ -8,7 +8,7 @@ script:
   - mvn test
   - mvn package -DskipTests=true
 
-deploy:
+after_success:
   - mvn deploy
 
 # Set up notification options
