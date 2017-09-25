@@ -9,19 +9,7 @@ script:
   - mvn package -DskipTests=true
 
 deploy:
-  provider: s3
-  access_key_id: AKIAJWKQRWFHCSYGSEVA
-  secret_access_key:
-    secure: "TbS6w+WRhWtx4SJiSc1Av+pWscQkcQzQpMRmDtZTWipPpYV7YskjWTibpfMcNwgKy7zLeB9/AcdTbxTFzge/1RRyri1hKjlrMfra7zhnbHGIwCkr6LpB21G4wEBaE9rzArwZcHLJJvYolHWf0nTbXMCFD2IsF6wrkNzZO3n51Kig1DyAyjXvqKyH9/sgW40yeRKD6rFAxX/lBV9a2zvbwJPUyIv8RYXMxI3h6d5/J5tJbl76LBi2a9PNh+OdJRHFFe2aT/exN9PesiUBH8gvJrR/k5ZMltDt5xh9yuUiUFPvjIWGKfQAJp8WHC3E4npdwcLLc6pSg7MZsIqesGFKZz0IHMLdRiZpyFVC864cKJNtvKOJ/52ioje+gTX0LgISkvAx5Pg4+MfT1UYhQU7h3jUtKzclI7JXL0lhIeLfFLTPQJNQW28nEqPogHLSY/7IzGh0vFxtfGA25AARByyMxqUVdU9tdkj0v8ewxrDDyAh8bwP8loKhgPK/Xt2S/OcJEUFY7C4tRiwiK5OYuvDalGc1DtYsAJ1ri3h483sBu5BgPadHwLld7R8DVARGn8uyAm88jsFJT+fNWYHvsUS2JARshhoVgPYhuMJvhJzIh08m0pVs0y1dEta884uY9sfTdl7gYdVPWjmFeHv8PnUFTKqqyMmG6sq5tvtrWQLLTvw="
-  bucket: keynexus-builds
-  local-dir: target
-  upload-dir: java/netty
-  acl: private
-  skip_cleanup: true
-  region: us-west-2
-  on:
-    repo: KeyNexus/netty
-    all_branches: true
+  - mvn deploy
 
 # Set up notification options
 notifications: 
@@ -40,6 +28,11 @@ env:
     - KN_THEME=default
     - KN_ENVIRONMENT=test
     - CC_TEST_REPORTER_ID=45c807ce000072ac08ab5da26a869f6d79f31f640d437ff7850707c76e29c771
+  
+  # S3_ID, encrypted value
+  secure: BftCq+L7yUjk2R9r2e9uQOLelWZkds9tQzekxPUxaI7SSkSCmOPHmgvSM2KQ5Q0kpTMtpdE+e+RI5LcNCJ4mSdQdTJMfNE8geFjXC8YL2HTYzCKc2pNC0idPL7BnkOSijylkXKAkxVsmfnsn8vvzDWMJMT14BnzHJIGOl76vof2AMXMJjOy/OtPt3AEeOPq+5y9PZ5pydQKwBfrDDQnsCs3rHoECHA7dz2kAx5un8QqWkfVhaOhsmYMwYvisgYU5c/x1E17dvZA6/jTze+Wfxq0PlNUaJty1VV+J6Iv2yNvwXqTs5vlES4u7LIOO7NuFGBu86C8+j4/MGLQ2IoB4WvblMlzTGucn9bmDSUrQF50ZamryQH3m6WXBtGMGltlBtz+zwepAIB9miAYEYYWUyEt2lcA4tX1RazPCo63mYb+9+HXaAvNblXOGnRZtMm8BkwwocjMCqhohVfsTDlWemS1bHHN0fCPaGLowXNEY9AboNqwLJHjWudG3KSwf/7v2yL8l4uE49bz3JdW2K1z1zeKETYdNfOlgnfamQbO/VcT4yR/B1BUb9UuITouBAoIle4q+ZXm58SNOhuH4LX/UxAC3EqjJWDawIzhmiAlm4HhNbmgNDRoDB0mmZZ0Szq6GMCdKsJrcwAq1gFwElOrFnEICDxFw6JsLitpW4x8MMys=
+  # S3_PASS, encrypted value
+  secure: e1Fvpi3L6PmjRtdyjyZMPSKRz99Pg8CZiz7j/UMTSu23sY6gL8YB1CVdFY0uNA4ejroztgZMtNEXAH91yXuTQous4gBvHVf6QlfCd49Ed1hDu+vMolZWt/CnWNbE2Bd6bPrtZJS5fjU8laCDlU2sTZtp8hqgvej0LQhlzpF1r7lSaLekFZN34A62xno9U6FD/uQ8w9VNJoRsY4vvxUgtPNAqV1IxF2lcwdMDel5LuoSKqtmUTCI/bXQ16ZjAJWxq6453xr4evfMv8gJ+fJ3iZXw17jf/MJhRS0/aqr2Ovr09SubuXZEtYRjdh8BrNlNTadkxVMlaoxGYfzuDAnntrGOQiQUnKyKv/V9c9oFjA/33SX7SPN9CnaCa5AuXZJSzdb6ec2UljelJ/nFpvxWkatk6Mud5t0nnuA8CuemvdJGuPBagHH76zkTsoE0GX8r3f/i06pM1lWh6awndqtjZ02E1MOGLcrq6R+ZAfqO4vEl+FqJDSsaEM4LMik/lnqG6ax5zTSmkNw4ziiIYyGobxk86rRADtWoBN+knAMjbhn4MxMnxdpMbPPk6jti7Xh+FStpIiObPspDWFpATlcONGMWEYFwdPBWPUN88rwZwvfmeFPpJnRrKc2XRSXssK/16q4iJf6Je0bJLfc1Ikyve4RocpYFd15v1jAEzKe3erk4=
 
 # configure which branches to run
 branches:
